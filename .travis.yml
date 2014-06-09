@@ -6,6 +6,8 @@ install:
   - cpanm -n Dist::Zilla
   - cpanm authordeps --missing | cpanm -n
   - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version Test::Vars || true
+  - cpanm Alien::Libarchive::Installer -n
+  - cpanm -n FFI::Raw || true
 
 perl:
   - "5.8"
@@ -16,11 +18,12 @@ perl:
   - "5.18"
   - "5.19"
 
-#env:
-#  - FOO=bar
+env:
+  - ALIEN_LIBARCHIVE=share
+  - ALIEN_LIBARCHIVE=system
 
 #before_script: /bin/true
 
-script: HARNESS_IS_VERBOSE=1 prove -lv t xt
+script: dzil test -v
 
 #after_script: /bin/true

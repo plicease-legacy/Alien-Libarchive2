@@ -33,14 +33,19 @@ Makefile.PL
 
 FFI::Raw
 
-    FIXME
+    use Alien::Libarchive;
+    use FFI::Raw;
+    
+    my($dll) = Alien::Libarchive->new->dlls;
+    FFI::Raw->new($dll, 'archive_read_new', FFI::Raw::ptr);
 
 FFI::Sweet
 
     use Alien::Libarchive;
     use FFI::Sweet;
     
-    ffi_lib( Alien::Libarchive->new->libs );
+    ffi_lib( Alien::Libarchive->new->dlls );
+    attach_function 'archive_read_new', [], _ptr;
 
 # DESCRIPTION
 
@@ -95,14 +100,6 @@ A C compiler and any prerequisites for building libarchive.
     will patch libarchive before it attempts to build if it is
     version 3.1.2.
 
-- Strawberry Perl
-
-        FIXME
-
-- Windows Perl with Visual C++
-
-        FIXME
-
 # METHODS
 
 ## cflags
@@ -112,6 +109,15 @@ Returns the C compiler flags necessary to build against libarchive.
 ## libs
 
 Returns the library flags necessary to build against libarchive.
+
+## dlls
+
+Returns a list of dynamic libraries (usually a list of just one library)
+that make up libarchive.  This can be used for [FFI::Raw](https://metacpan.org/pod/FFI::Raw).
+
+## install\_type
+
+Returns the install type, one of either `system` or `share`.
 
 # CAVEATS
 
@@ -126,7 +132,7 @@ distributions that depend on it as well.
 
 # SEE ALSO
 
-- [Alien::Libarchive](https://metacpan.org/pod/Alien::Libarchive)
+- [Alien::Libarchive::Installer](https://metacpan.org/pod/Alien::Libarchive::Installer)
 - [Archive::Libarchive::XS](https://metacpan.org/pod/Archive::Libarchive::XS)
 - [Archive::Libarchive::FFI](https://metacpan.org/pod/Archive::Libarchive::FFI)
 - [Archive::Libarchive::Any](https://metacpan.org/pod/Archive::Libarchive::Any)

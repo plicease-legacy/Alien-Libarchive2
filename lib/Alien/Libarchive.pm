@@ -2,6 +2,9 @@ package Alien::Libarchive;
 
 use strict;
 use warnings;
+use File::ShareDir qw( dist_dir );
+use File::Spec;
+use Alien::Libarchive::ConfigData;
 
 # ABSTRACT: Build and make available libarchive
 # VERSION
@@ -37,14 +40,19 @@ Makefile.PL
 
 FFI::Raw
 
- FIXME
+ use Alien::Libarchive;
+ use FFI::Raw;
+ 
+ my($dll) = Alien::Libarchive->new->dlls;
+ FFI::Raw->new($dll, 'archive_read_new', FFI::Raw::ptr);
 
 FFI::Sweet
 
  use Alien::Libarchive;
  use FFI::Sweet;
  
- ffi_lib( Alien::Libarchive->new->libs );
+ ffi_lib( Alien::Libarchive->new->dlls );
+ attach_function 'archive_read_new', [], _ptr;
 
 =head1 DESCRIPTION
 
@@ -105,15 +113,15 @@ minor tweak to one of the include files.  On Cygwin this module
 will patch libarchive before it attempts to build if it is
 version 3.1.2.
 
-=item Strawberry Perl
-
- FIXME
-
-=item Windows Perl with Visual C++
-
- FIXME
-
 =back
+
+=cut
+
+sub new
+{
+  my($class) = @_;
+  bless {}, $class;
+}
 
 =head1 METHODS
 
@@ -121,9 +129,73 @@ version 3.1.2.
 
 Returns the C compiler flags necessary to build against libarchive.
 
+=cut
+
+sub cflags
+{
+  my($class) = @_;
+  my @cflags = @{ Alien::Libarchive::ConfigData->config("cflags") };
+  unshift @cflags, '-I' . File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'include' )
+    if $class->install_type eq 'share';
+  @cflags;
+}
+
 =head2 libs
 
 Returns the library flags necessary to build against libarchive.
+
+=cut
+
+sub libs
+{
+  my($class) = @_;
+  my @libs = @{ Alien::Libarchive::ConfigData->config("libs") };
+  # FIXME: -L won't work with Visual C++
+  unshift @libs, '-L' . File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'lib' )
+    if $class->install_type eq 'share';
+  @libs;
+}
+
+=head2 dlls
+
+Returns a list of dynamic libraries (usually a list of just one library)
+that make up libarchive.  This can be used for L<FFI::Raw>.
+
+=cut
+
+sub dlls
+{
+  my($class) = @_;
+  my @list;
+  if($class->install_type eq 'system')
+  {
+    require Alien::Libarchive::Installer;
+    @list = Alien::Libarchive::Installer->system_install->dlls;
+  }
+  else
+  {
+    # FIXME does not work yet
+    opendir(my $dh, File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'dll'));
+    @list = grep { ! -l $_ }
+            map { File::Spec->catfile(dist_dir('Alien-Libarchive'), 'libarchive019', 'dll', $_) }
+            grep { /\.so/ || /\.(dll|dylib)$/ }
+            grep !/\./,
+            readdir $dh;
+    closedir $dh;
+  }
+  @list;
+}
+
+=head2 install_type
+
+Returns the install type, one of either C<system> or C<share>.
+
+=cut
+
+sub install_type
+{
+  Alien::Libarchive::ConfigData->config("install_type");
+}
 
 =head1 CAVEATS
 
@@ -140,7 +212,7 @@ distributions that depend on it as well.
 
 =over 4
 
-=item L<Alien::Libarchive>
+=item L<Alien::Libarchive::Installer>
 
 =item L<Archive::Libarchive::XS>
 
