@@ -2,9 +2,10 @@ package Alien::Libarchive;
 
 use strict;
 use warnings;
-use File::ShareDir qw( dist_dir );
+use File::ShareDir ();
 use File::Spec;
 use Alien::Libarchive::ConfigData;
+use constant _share_dir => File::ShareDir::dist_dir('Alien-Libarchive');
 
 # ABSTRACT: Build and make available libarchive
 # VERSION
@@ -135,7 +136,7 @@ sub cflags
 {
   my($class) = @_;
   my @cflags = @{ Alien::Libarchive::ConfigData->config("cflags") };
-  unshift @cflags, '-I' . File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'include' )
+  unshift @cflags, '-I' . File::Spec->catdir(_share_dir, 'libarchive019', 'include' )
     if $class->install_type eq 'share';
   @cflags;
 }
@@ -151,7 +152,7 @@ sub libs
   my($class) = @_;
   my @libs = @{ Alien::Libarchive::ConfigData->config("libs") };
   # FIXME: -L won't work with Visual C++
-  unshift @libs, '-L' . File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'lib' )
+  unshift @libs, '-L' . File::Spec->catdir(_share_dir, 'libarchive019', 'lib' )
     if $class->install_type eq 'share';
   @libs;
 }
@@ -175,9 +176,9 @@ sub dlls
   else
   {
     # FIXME does not work yet
-    opendir(my $dh, File::Spec->catdir(dist_dir('Alien-Libarchive'), 'libarchive019', 'dll'));
+    opendir(my $dh, File::Spec->catdir(_share_dir, 'libarchive019', 'dll'));
     @list = grep { ! -l $_ }
-            map { File::Spec->catfile(dist_dir('Alien-Libarchive'), 'libarchive019', 'dll', $_) }
+            map { File::Spec->catfile(_share_dir, 'libarchive019', 'dll', $_) }
             grep { /\.so/ || /\.(dll|dylib)$/ }
             grep !/\./,
             readdir $dh;
