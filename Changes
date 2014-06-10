@@ -1,7 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  - make sure cflags and libs are stored as list ref
+
+0.18_04   2014-06-10 09:19:32 -0400
+  - cflags reference bug fix
 
 0.18_03   2014-06-10 09:06:55 -0400
   - fix prereqs
