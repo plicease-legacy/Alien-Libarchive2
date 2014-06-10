@@ -127,6 +127,16 @@ Returns just the first dynamic library found in scalar context.
 
 Returns the install type, one of either `system` or `share`.
 
+## pkg\_config\_dir
+
+Returns a path that contains the libarchive.pc file which can be used
+by pkg-config for linking against libarchive.
+
+## pkg\_config\_name
+
+Returns the name by which pkg-config knows libarchive (should always
+be libarchive).
+
 # CAVEATS
 
 Debian Linux and FreeBSD (9.0) have been tested the most

@@ -207,14 +207,8 @@ sub dlls
   }
   else
   {
-    opendir(my $dh, _catdir(_share_dir, 'libarchive019', 'dll'));
-    @list = grep { ! -l $_ }
-            map { _catfile(_share_dir, 'libarchive019', 'dll', $_) }
-            grep { /\.so/ || /\.(dll|dylib)$/ }
-            grep !/^\./,
-            sort
-            readdir $dh;
-    closedir $dh;
+    @list = map { _catfile(_share_dir, 'libarchive019', 'dll', $_) }
+            @{ $cf->config("dlls") };
   }
   wantarray ? @list : $list[0];
 }
@@ -228,6 +222,30 @@ Returns the install type, one of either C<system> or C<share>.
 sub install_type
 {
   $cf->config("install_type");
+}
+
+=head2 pkg_config_dir
+
+Returns a path that contains the libarchive.pc file which can be used
+by pkg-config for linking against libarchive.
+
+=cut
+
+sub pkg_config_dir
+{
+  _catdir(_share_dir, 'libarchive019', 'lib', 'pkgconfig');
+}
+
+=head2 pkg_config_name
+
+Returns the name by which pkg-config knows libarchive (should always
+be libarchive).
+
+=cut
+
+sub pkg_config_name
+{
+  'libarchive';
 }
 
 # extract the macros from the header files, this is a private function
