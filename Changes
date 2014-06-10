@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - fix prereqs
 
 0.18_02   2014-06-10 08:36:20 -0400
   - libs and cflags now return a list in list context and a scalar in scalar context
