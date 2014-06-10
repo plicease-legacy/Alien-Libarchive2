@@ -42,7 +42,7 @@ sub new
     my $prereqs = Alien::Libarchive::Installer->build_requires;  
     while(my($mod,$ver) = each %$prereqs)
     {
-      $args{requires}->{$mod} = $ver;
+      $args{build_requires}->{$mod} = $ver;
     }
   }
 

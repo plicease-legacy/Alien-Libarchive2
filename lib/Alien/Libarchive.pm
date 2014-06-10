@@ -6,6 +6,7 @@ use File::ShareDir ();
 use File::Spec;
 use Alien::Libarchive::ConfigData;
 use constant _share_dir => File::ShareDir::dist_dir('Alien-Libarchive');
+use constant _alien_libarchive019 => 1;
 
 # ABSTRACT: Build and make available libarchive
 # VERSION

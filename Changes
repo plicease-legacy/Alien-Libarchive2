@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - require Alien::Libarchive::Installer 0.03
 
 0.18_04   2014-06-10 09:19:32 -0400
   - cflags reference bug fix
