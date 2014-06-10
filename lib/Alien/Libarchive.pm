@@ -198,12 +198,11 @@ sub dlls
   }
   else
   {
-    # FIXME does not work yet
     opendir(my $dh, _catdir(_share_dir, 'libarchive019', 'dll'));
     @list = grep { ! -l $_ }
             map { _catfile(_share_dir, 'libarchive019', 'dll', $_) }
             grep { /\.so/ || /\.(dll|dylib)$/ }
-            grep !/\./,
+            grep !/^\./,
             readdir $dh;
     closedir $dh;
   }
