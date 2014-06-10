@@ -24,7 +24,12 @@ sub new
 
   unless(($ENV{ALIEN_LIBARCHIVE} || 'system') eq 'share')
   {
-    $system = eval { Alien::Libarchive::Installer->system_install( type => $type ) };
+    $system = eval {
+      Alien::Libarchive::Installer->system_install(
+        type  => $type,
+        alien => 0,
+      )
+    };
   }
 
   unless(defined $system)
