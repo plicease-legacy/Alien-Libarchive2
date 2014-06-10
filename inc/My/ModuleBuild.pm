@@ -40,6 +40,7 @@ sub new
 
   $self->config_data( name => 'libarchive' );
   $self->config_data( already_built => 0 );
+  $self->config_data( msvc => $^O eq 'MSWin32' && $Config{cc} =~ /cl(\.exe)?$/i ? 1 : 0 );
   
   $self->add_to_cleanup( '_alien', 'share/libarchive019' );
   
@@ -75,6 +76,10 @@ sub ACTION_build
       my $build = Alien::Libarchive::Installer->build_install( $prefix, dir => $build_dir );
       $self->config_data( cflags => [grep !/^-I/, @{ $build->cflags }] );
       $self->config_data( libs =>   [grep !/^-L/, @{ $build->libs }] );
+      if($self->config_data('msvc'))
+      {
+        $self->config_data( libs =>   [grep !/^(\/|-)libpath/i, @{ $build->libs }] );
+      }
       $self->config_data( already_built => 1 );
     }
   }

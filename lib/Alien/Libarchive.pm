@@ -10,6 +10,20 @@ use constant _share_dir => File::ShareDir::dist_dir('Alien-Libarchive');
 # ABSTRACT: Build and make available libarchive
 # VERSION
 
+my $cf = 'Alien::Libarchive::ConfigData';
+
+sub _catfile {
+  my $path = File::Spec->catfile(@_);
+  $path =~ s{\\}{/}g if $^O eq 'MSWin32';
+  $path;
+}
+
+sub _catdir {
+  my $path = File::Spec->catdir(@_);
+  $path =~ s{\\}{/}g if $^O eq 'MSWin32';
+  $path;
+}
+
 =head1 SYNOPSIS
 
 Build.PL
@@ -135,8 +149,8 @@ Returns the C compiler flags necessary to build against libarchive.
 sub cflags
 {
   my($class) = @_;
-  my @cflags = @{ Alien::Libarchive::ConfigData->config("cflags") };
-  unshift @cflags, '-I' . File::Spec->catdir(_share_dir, 'libarchive019', 'include' )
+  my @cflags = @{ $cf->config("cflags") };
+  unshift @cflags, '-I' . _catdir(_share_dir, 'libarchive019', 'include' )
     if $class->install_type eq 'share';
   @cflags;
 }
@@ -150,10 +164,19 @@ Returns the library flags necessary to build against libarchive.
 sub libs
 {
   my($class) = @_;
-  my @libs = @{ Alien::Libarchive::ConfigData->config("libs") };
-  # FIXME: -L won't work with Visual C++
-  unshift @libs, '-L' . File::Spec->catdir(_share_dir, 'libarchive019', 'lib' )
-    if $class->install_type eq 'share';
+  my @libs = @{ $cf->config("libs") };
+  if($class->install_type eq 'share')
+  {
+    if($cf->config('msvc'))
+    {
+      unshift @libs, '/libpath:' . _catdir(_share_dir, 'libarchive019', 'lib');
+      @libs = map { s{^.*(\\|/)}{} if m/archive_static\.lib$/; $_ } @libs;
+    }
+    else
+    {
+      unshift @libs, '-L' . _catdir(_share_dir, 'libarchive019', 'lib');
+    }
+  }
   @libs;
 }
 
@@ -176,9 +199,9 @@ sub dlls
   else
   {
     # FIXME does not work yet
-    opendir(my $dh, File::Spec->catdir(_share_dir, 'libarchive019', 'dll'));
+    opendir(my $dh, _catdir(_share_dir, 'libarchive019', 'dll'));
     @list = grep { ! -l $_ }
-            map { File::Spec->catfile(_share_dir, 'libarchive019', 'dll', $_) }
+            map { _catfile(_share_dir, 'libarchive019', 'dll', $_) }
             grep { /\.so/ || /\.(dll|dylib)$/ }
             grep !/\./,
             readdir $dh;
@@ -195,7 +218,7 @@ Returns the install type, one of either C<system> or C<share>.
 
 sub install_type
 {
-  Alien::Libarchive::ConfigData->config("install_type");
+  $cf->config("install_type");
 }
 
 =head1 CAVEATS
