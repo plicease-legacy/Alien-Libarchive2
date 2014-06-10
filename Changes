@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - libs and cflags now return a list in list context and a scalar in scalar context
+    (used to always return a scalar)
 
 0.18_01   2014-06-10 08:19:36 -0400
   - completely new implementation based on Alien::Libarchive::Installer instead of Alien::Base
