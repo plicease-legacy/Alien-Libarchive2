@@ -106,14 +106,22 @@ A C compiler and any prerequisites for building libarchive.
 
 Returns the C compiler flags necessary to build against libarchive.
 
+Returns flags as a list in list context and combined into a string in
+scalar context.
+
 ## libs
 
 Returns the library flags necessary to build against libarchive.
+
+Returns flags as a list in list context and combined into a string in
+scalar context.
 
 ## dlls
 
 Returns a list of dynamic libraries (usually a list of just one library)
 that make up libarchive.  This can be used for [FFI::Raw](https://metacpan.org/pod/FFI::Raw).
+
+Returns just the first dynamic library found in scalar context.
 
 ## install\_type
 

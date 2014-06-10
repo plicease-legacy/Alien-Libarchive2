@@ -144,6 +144,9 @@ sub new
 
 Returns the C compiler flags necessary to build against libarchive.
 
+Returns flags as a list in list context and combined into a string in
+scalar context.
+
 =cut
 
 sub cflags
@@ -152,12 +155,15 @@ sub cflags
   my @cflags = @{ $cf->config("cflags") };
   unshift @cflags, '-I' . _catdir(_share_dir, 'libarchive019', 'include' )
     if $class->install_type eq 'share';
-  @cflags;
+  wantarray ? @cflags : "@cflags";
 }
 
 =head2 libs
 
 Returns the library flags necessary to build against libarchive.
+
+Returns flags as a list in list context and combined into a string in
+scalar context.
 
 =cut
 
@@ -177,13 +183,15 @@ sub libs
       unshift @libs, '-L' . _catdir(_share_dir, 'libarchive019', 'lib');
     }
   }
-  @libs;
+  wantarray ? @libs : "@libs";
 }
 
 =head2 dlls
 
 Returns a list of dynamic libraries (usually a list of just one library)
 that make up libarchive.  This can be used for L<FFI::Raw>.
+
+Returns just the first dynamic library found in scalar context.
 
 =cut
 
@@ -203,10 +211,11 @@ sub dlls
             map { _catfile(_share_dir, 'libarchive019', 'dll', $_) }
             grep { /\.so/ || /\.(dll|dylib)$/ }
             grep !/^\./,
+            sort
             readdir $dh;
     closedir $dh;
   }
-  @list;
+  wantarray ? @list : $list[0];
 }
 
 =head2 install_type
