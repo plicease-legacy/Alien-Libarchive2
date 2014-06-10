@@ -1,4 +1,66 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - completely new implementation based on Alien::Libarchive::Installer instead of Alien::Base
+
+0.18      2014-02-03 16:40:43 -0500
+  - Fix ExtUtils::CChecker calling error
+
+0.17      2014-02-03 16:37:39 -0500
+  - remove -fPIC / -fno-common detection and instead rely on $Config{cccdlflags}
+  - use $Config{optimize} for CFLAGS passed to libarchive configure
+
+0.16      2014-02-02 04:30:52 -0500
+  - build with -fPIC if possible
+
+0.15      2014-01-29 11:30:49 -0500
+  - fix prereqs
+
+0.14      2014-01-29 09:37:52 -0500
+  - build with -fno-common if possible
+
+0.12      2014-01-02 10:59:11 -0500
+  - require Alien::Libarchive::MSWin32 0.04 on MSWin32
+
+0.11      2013-12-24 09:26:53 -0500
+  - require Alien::Libarchive::MSWin32 0.02 on MSWin32
+
+0.10      2013-12-19 03:04:41 -0500
+  - fix for beter detection of libarchive sans pkg-config as a system install
+    (runtime didn't work on non-FreeBSD systems)
+
+0.09      2013-12-18 09:06:08 -0500
+  - verify Alien deps flags can at least compile a simple c program
+  - better detection of libarchive sans pkg-config as a system install
+
+0.08      2013-12-12 17:07:56 -0500
+  - documentation
+  - try to use Alien::bz2 if available
+  - include bin directory in PATH for cygwin install_type = share 
+    so dll can be found
+  - basic compile check to be sure it works
+
+0.07      2013-12-05 18:44:24 -0500
+  - prefer non-system lib when that is what you installed
+  - patch 3.1.2 on cygwin so that it will build
+  - Strawberry Perl support via Alien::Libarchive::MSWin32
+
+0.06      2013-11-29 10:02:22 -0500
+  - support for perl 5.12, 5.10, 5.8
+
+0.05      2013-11-26 16:57:45 -0500
+  - more diagnostics
+
+0.04      2013-11-26 12:05:20 -0500
+  - use Alien::OpenSSL and Alien::LibXML if available
+  - First CPAN release
+
+0.03      2013-11-20 12:46:58 -0500
+  - support for FreeBSD native build
+
+0.02      2013-11-15 10:55:29 -0500
+  - rm deps on Alien::OpenSSL, Alien::LibXML
+  - rm dep on Path::Class
+
+0.01      2013-11-14 17:07:12 -0500
   - initial version
