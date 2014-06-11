@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.20      2014-06-10 20:32:27 -0400
+  - mark prereqs as dynamic
+
 0.19      2014-06-10 20:17:45 -0400
   - dynamic libs handle upgrades more gracefully
   - promote to production
