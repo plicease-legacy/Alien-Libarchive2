@@ -5,6 +5,8 @@ use warnings;
 use base qw( Module::Build );
 use Config;
 use Alien::Libarchive::Installer;
+use Alien::bz2::Installer;
+use Alien::lzo::Installer;
 use File::Spec;
 use FindBin ();
 
