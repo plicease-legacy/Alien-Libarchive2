@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.20_04   2014-06-18 16:02:34 -0400
   - explicitly declare Alien::bz2::Installer as a configure prereq
 
 0.20_03   2014-06-18 07:55:33 -0400
