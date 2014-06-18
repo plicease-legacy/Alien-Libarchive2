@@ -1,4 +1,4 @@
-package Alien::lzo::Installer;
+package Alien::LZO::Installer;
 
 use strict;
 use warnings;
@@ -23,12 +23,12 @@ sub _catdir {
 Build.PL
 
  # as an optional dep
- use Alien::lzo::Installer;
+ use Alien::LZO::Installer;
  use Module::Build;
  
  my %build_args;
  
- my $installer = eval { Alien::lzo::Installer->system_install };
+ my $installer = eval { Alien::LZO::Installer->system_install };
  if($installer)
  {
    $build_args{extra_compiler_flags} = $installer->cflags,
@@ -41,17 +41,17 @@ Build.PL
 Build.PL
 
  # require 2.0
- use Alien::lzo::Installer;
+ use Alien::LZO::Installer;
  use Module::Build;
  
  my $installer = eval {
-   my $system_installer = Alien::lzo::Installer->system_install;
+   my $system_installer = Alien::LZO::Installer->system_install;
    die "we require 2.00 or better"
      if $system->version !~ /^([0-9]+)\./ && $1 >= 2;
    $system_installer;
       # reasonably assumes that build_install will never download
       # a version older that 3.0
- } || Alien::lzo::Installer->build_install("dir");
+ } || Alien::LZO::Installer->build_install("dir");
  
  my $build = Module::Build->new(
    extra_compiler_flags => $installer->cflags,
@@ -62,11 +62,11 @@ Build.PL
 FFI::Raw
 
  # as an optional dep
- use Alien::lzo::Installer;
+ use Alien::LZO::Installer;
  use FFI::Raw;
  
  eval {
-   my($dll) = Alien::lzo::Installer->system_install->dlls;
+   my($dll) = Alien::LZO::Installer->system_install->dlls;
    FFI::Raw->new($dll, 'lzo_version', FFI::Raw::uint);
  };
  if($@)
@@ -82,7 +82,7 @@ version of lzo that you use, and lzo is not an optional
 requirement, then you are probably more interested in using
 L<Alien::lzo>.
 
-Where L<Alien::lzo::Installer> is useful is when you have
+Where L<Alien::LZO::Installer> is useful is when you have
 specific version requirements (say you require 3.0.x but 2.7.x
 will not do), but would still like to use the system lzo
 if it is available.
@@ -90,17 +90,17 @@ if it is available.
 =head1 CLASS METHODS
 
 Class methods can be executed without creating an instance of
-L<Alien::lzo::Installer>, and generally used to query
+L<Alien::LZO::Installer>, and generally used to query
 status of lzo availability (either via the system or the
 internet).  Methods that discover a system lzo or build
 a one from source code on the Internet will generally return
-an instance of L<Alien::lzo::Installer> which can be
+an instance of L<Alien::LZO::Installer> which can be
 queried to retrieve the settings needed to interact with 
 lzo via XS or L<FFI::Raw>.
 
 =head2 versions_available
 
- my @versions = Alien::lzo::Installer->versions_available;
+ my @versions = Alien::LZO::Installer->versions_available;
  my $latest_version = $versions[-1];
 
 Return the list of versions of lzo available on the Internet.
@@ -125,11 +125,11 @@ sub versions_available
 
 =head2 fetch
 
- my($location, $version) = Alien::lzo::Installer->fetch(%options);
- my $location = Alien::lzo::Installer->fetch(%options);
+ my($location, $version) = Alien::LZO::Installer->fetch(%options);
+ my $location = Alien::LZO::Installer->fetch(%options);
 
 B<NOTE:> using this method may (and probably does) require modules
-returned by the L<build_requires|Alien::lzo::Installer#build_requires>
+returned by the L<build_requires|Alien::LZO::Installer#build_requires>
 method.
 
 Download lzo source from the internet.  By default it will
@@ -192,7 +192,7 @@ sub fetch
 
 =head2 build_requires
 
- my $prereqs = Alien::lzo::Installer->build_requires;
+ my $prereqs = Alien::LZO::Installer->build_requires;
  while(my($module, $version) = each %$prereqs)
  {
    ...
@@ -224,7 +224,7 @@ sub build_requires
 
 =head2 system_requires
 
-This is like L<build_requires|Alien::lzo::Installer#build_requires>,
+This is like L<build_requires|Alien::LZO::Installer#build_requires>,
 except it is used when using the lzo that comes with the operating
 system.
 
@@ -238,10 +238,10 @@ sub system_requires
 
 =head2 system_install
 
- my $installer = Alien::lzo::Installer->system_install(%options);
+ my $installer = Alien::LZO::Installer->system_install(%options);
 
 B<NOTE:> using this method may require modules returned by the
-L<system_requires|Alien::lzo::Installer> method.
+L<system_requires|Alien::LZO::Installer> method.
 
 B<NOTE:> This form will also use the lzo provided by L<Alien::lzo>
 if version 0.19 or better is installed.  This makes this method ideal for
@@ -261,19 +261,19 @@ set according to the needs of your module.  Should be one of:
 
 =item compile
 
-use L<test_compile_run|Alien::lzo::Installer#test_compile_run> to verify.
+use L<test_compile_run|Alien::LZO::Installer#test_compile_run> to verify.
 This is the default.
 
 =item ffi
 
-use L<test_ffi|Alien::lzo::Installer#test_ffi> to verify
+use L<test_ffi|Alien::LZO::Installer#test_ffi> to verify
 
 =item both
 
 use both
-L<test_compile_run|Alien::lzo::Installer#test_compile_run>
+L<test_compile_run|Alien::LZO::Installer#test_compile_run>
 and
-L<test_ffi|Alien::lzo::Installer#test_ffi>
+L<test_ffi|Alien::LZO::Installer#test_ffi>
 to verify
 
 =back
@@ -320,15 +320,15 @@ sub system_install
 
 =head2 build_install
 
- my $installer = Alien::lzo::Installer->build_install( '/usr/local', %options );
+ my $installer = Alien::LZO::Installer->build_install( '/usr/local', %options );
 
 B<NOTE:> using this method may (and probably does) require modules
-returned by the L<build_requires|Alien::lzo::Installer>
+returned by the L<build_requires|Alien::LZO::Installer>
 method.
 
 Build and install lzo into the given directory.  If there
 is an error an exception will be thrown.  On a successful build, an
-instance of L<Alien::lzo::Installer> will be returned.
+instance of L<Alien::LZO::Installer> will be returned.
 
 These options may be passed into build_install:
 
@@ -355,19 +355,19 @@ set according to the needs of your module.  Should be one of:
 
 =item compile
 
-use L<test_compile_run|Alien::lzo::Installer#test_compile_run> to verify.
+use L<test_compile_run|Alien::LZO::Installer#test_compile_run> to verify.
 This is the default.
 
 =item ffi
 
-use L<test_ffi|Alien::lzo::Installer#test_ffi> to verify
+use L<test_ffi|Alien::LZO::Installer#test_ffi> to verify
 
 =item both
 
 use both
-L<test_compile_run|Alien::lzo::Installer#test_compile_run>
+L<test_compile_run|Alien::LZO::Installer#test_compile_run>
 and
-L<test_ffi|Alien::lzo::Installer#test_ffi>
+L<test_ffi|Alien::LZO::Installer#test_ffi>
 to verify
 
 =back
@@ -540,10 +540,10 @@ sub build_install
 
 =head1 ATTRIBUTES
 
-Attributes of an L<Alien::lzo::Installer> provide the
+Attributes of an L<Alien::LZO::Installer> provide the
 information needed to use an existing lzo (which may
 either be provided by the system, or have just been built
-using L<build_install|Alien::lzo::Installer#build_install>.
+using L<build_install|Alien::LZO::Installer#build_install>.
 
 =head2 cflags
 
@@ -793,8 +793,8 @@ sub test_ffi
 
 =head2 error
 
-Returns the error from the previous call to L<test_compile_run|Alien::lzo::Installer#test_compile_run>
-or L<test_ffi|Alien::lzo::Installer#test_ffi>.
+Returns the error from the previous call to L<test_compile_run|Alien::LZO::Installer#test_compile_run>
+or L<test_ffi|Alien::LZO::Installer#test_ffi>.
 
 =cut
 

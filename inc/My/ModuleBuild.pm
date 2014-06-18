@@ -6,7 +6,7 @@ use base qw( Module::Build );
 use Config;
 use Alien::Libarchive::Installer;
 use Alien::bz2::Installer;
-use Alien::lzo::Installer;
+use Alien::LZO::Installer;
 use File::Spec;
 use FindBin ();
 
@@ -53,7 +53,7 @@ sub new
 
   unless(defined $system)
   {
-    foreach my $class (map { "Alien::$_\::Installer" } qw( Libarchive bz2 lzo ))
+    foreach my $class (map { "Alien::$_\::Installer" } qw( Libarchive bz2 LZO ))
     {
       my $prereqs = $class->build_requires;  
       while(my($mod,$ver) = each %$prereqs)
@@ -120,14 +120,14 @@ sub ACTION_build
         close $fh;
       };
 
-      if(eval { require Alien::lzo::Installer; })
+      if(eval { require Alien::LZO::Installer; })
       {
-        my $build = eval { Alien::lzo::Installer->system_install };
+        my $build = eval { Alien::LZO::Installer->system_install };
         unless($build)
         {
           my $build_dir = _catdir($FindBin::Bin, '_alien_lzo');
           mkdir $build_dir unless -d $build_dir;
-          $build = eval { Alien::lzo::Installer->build_install($prefix, dir => $build_dir) };
+          $build = eval { Alien::LZO::Installer->build_install($prefix, dir => $build_dir) };
         }
       }
 
