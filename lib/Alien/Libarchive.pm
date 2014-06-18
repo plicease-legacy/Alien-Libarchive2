@@ -203,7 +203,7 @@ sub dlls
   if($class->install_type eq 'system')
   {
     require Alien::Libarchive::Installer;
-    @list = Alien::Libarchive::Installer->system_install->dlls;
+    @list = Alien::Libarchive::Installer->system_install( alien => 0 )->dlls;
   }
   else
   {
