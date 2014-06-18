@@ -102,6 +102,7 @@ sub ACTION_build
       do {
         my $lib = _catdir($prefix, 'lib');
         my $inc = _catdir($prefix, 'include');
+        my $dll = _catdir($prefix, 'dll');
       
         mkdir(_catdir($FindBin::Bin, '_alien'));
         open my $fh, '>', $ENV{CONFIG_SITE};
@@ -112,14 +113,13 @@ sub ACTION_build
                   "  CPPFLAGS=\"-I$inc\"\n",
                   "fi;\n",
                   "if [ -n \"\$LDFLAGS\" ] ; then\n",
-                  "  LDFLAGS=\"\$LDFLAGS -L$lib\"\n",
+                  "  LDFLAGS=\"\$LDFLAGS -L$lib -L$dll\"\n",
                   "else\n",
-                  "  LDFLAGS=\"-L$lib\"\n",
+                  "  LDFLAGS=\"-L$lib -L$dll\"\n",
                   "fi;\n";
         close $fh;
       };
 
-      $DB::single = 1;
       if(eval { require Alien::lzo::Installer; })
       {
         my $build = eval { Alien::lzo::Installer->system_install };
@@ -130,7 +130,6 @@ sub ACTION_build
           $build = eval { Alien::lzo::Installer->build_install($prefix, dir => $build_dir) };
         }
       }
-      $DB::single = 1;
 
       if(eval { require Alien::bz2::Installer; })
       {
@@ -146,7 +145,7 @@ sub ACTION_build
         {
           if($^O eq 'MSWin32')
           {
-            my $dir = _catdir($prefix, 'lib');
+            my $dir = _catdir($prefix, 'dll');
             mkdir $dir;
             my $la = _catfile($dir, 'libbz2.la');
             open my $fh, '>', $la;
@@ -176,7 +175,7 @@ sub ACTION_build
         opendir my $dh, _catdir($prefix, 'dll');
         my @list = grep { ! -l _catfile($prefix, 'dll', $_) }
                    grep { /\.so/ || /\.(dll|dylib)$/ }
-                   grep !/^(libbz2|bzip2.dll)/,
+                   grep !/^(libbz2|bzip2.dll|liblzo2)/,
                    grep !/^\./,
                    sort
                    readdir $dh;

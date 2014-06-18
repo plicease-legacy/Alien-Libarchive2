@@ -6,6 +6,18 @@ use warnings;
 # ABSTRACT: Installer for lzo
 # VERSION
 
+sub _catfile {
+  my $path = File::Spec->catfile(@_);
+  $path =~ s{\\}{/}g if $^O eq 'MSWin32';
+  $path;
+}
+
+sub _catdir {
+  my $path = File::Spec->catdir(@_);
+  $path =~ s{\\}{/}g if $^O eq 'MSWin32';
+  $path;
+}
+
 =head1 SYNOPSIS
 
 Build.PL
@@ -155,7 +167,7 @@ sub fetch
 
   if(defined $ENV{ALIEN_LZO_INSTALL_MIRROR})
   {
-    my $fn = File::Spec->catfile($ENV{ALIEN_LZO_INSTALL_MIRROR}, "lzo-$version.tar.gz");
+    my $fn = _catfile($ENV{ALIEN_LZO_INSTALL_MIRROR}, "lzo-$version.tar.gz");
     return wantarray ? ($fn, $version) : $fn;
   }
 
@@ -168,7 +180,7 @@ sub fetch
   
   require File::Spec;
   
-  my $fn = File::Spec->catfile($dir, "lzo-$version.tar.gz");
+  my $fn = _catfile($dir, "lzo-$version.tar.gz");
   
   open my $fh, '>', $fn;
   binmode $fh;
@@ -204,7 +216,7 @@ sub build_requires
   if($^O eq 'MSWin32')
   {
     $prereqs{'Alien::MSYS'} = '0.07';
-    $prereqs{'Archive::Ar'} = 0;
+    $prereqs{'Archive::Ar::Libarchive'} = 0;
   }
   
   \%prereqs;
@@ -382,6 +394,8 @@ sub _msys
 sub build_install
 {
   my($class, $prefix, %options) = @_;
+
+  require File::Spec;
   
   $options{test} ||= 'compile';
   die "test must be one of compile, ffi or both"
@@ -426,37 +440,57 @@ sub build_install
 
     if($^O eq 'MSWin32')
     {
-      # TODO: this will only work with gcc + libtool
+      # TODO: this will only work with gcc
       require File::Temp;
       my $dir = File::Temp::tempdir( CLEANUP => 1 );
-      require Archive::Ar;
-      my $ar = Archive::Ar->new(_catfile($prefix, 'lib', 'liblzo2.a'));
-      my @objects = $ar->list_files;
+      # TODO: use Archive::Ar when it is a little less broken
+      require Archive::Ar::Libarchive;
+      my $ar = Archive::Ar::Libarchive->new(_catfile($prefix, 'lib', 'liblzo2.a'));
+      my @objects = grep { $_ ne '/' } $ar->list_files;
       foreach my $object (@objects)
       {
-        open my $fh, '>', _catfile($dir, $object);
+        my $fh;
+        my $fn = _catfile($dir, $object);
+        open($fh, '>', $fn) || die "unable to write $fn $!";
+        binmode $fh;
         print $fh $ar->get_content($object)->{data};
         close $fh;
-      }
-      system 'libtool',
+      }      
+      system 'dlltool',
         '--export-all-symbols',
         -e => _catfile($dir, 'exports.o'),
         -l => _catfile($prefix, 'lib', 'liblzo2.dll.a'),
         map { _catfile($dir, $_) } @objects;
-      die "libtool failed" if $?;
+      die "dlltool failed" if $?;
       system 'gcc',
+        '--shared',
         -o => _catfile($prefix, 'lib', 'liblzo2.dll'),
         _catfile($dir, 'exports.o'),
         map { _catfile($dir, $_) } @objects;
+      
+      do {
+        my($in,$out);
+        open($in, '<', _catfile($prefix, 'lib', 'liblzo2.la'));
+        open($out, '>', _catfile($prefix, 'lib', 'liblzo2.la.tmp'));
+        while(<$in>)
+        {
+          s{^dlname='.*?'}{dlname='../dll/liblzo2.dll'};
+          s{^library_names='.*?'}{library_names='../dll/liblzo2.dll.a'};
+          print $out $_;
+        }
+        close $in;
+        close $out;
+        unlink _catfile($prefix, 'lib', 'liblzo2.la');
+        rename _catfile($prefix, 'lib', 'liblzo2.la.tmp'),
+               _catfile($prefix, 'lib', 'liblzo2.la');
+      };
     }
 
-    require File::Spec;
-
-    foreach my $name ($^O =~ /^(MSWin32|cygwin)$/ ? ('bin','lib') : ('lib'))
+    foreach my $name ('lib')
     {
       do {
-        my $static_dir = File::Spec->catdir($prefix, $name);
-        my $dll_dir    = File::Spec->catdir($prefix, 'dll');
+        my $static_dir = _catdir($prefix, $name);
+        my $dll_dir    = _catdir($prefix, 'dll');
         require File::Path;
         File::Path::mkpath($dll_dir, 0, 0755);
         my $dh;
@@ -466,8 +500,8 @@ sub build_install
         closedir $dh;
         foreach my $basename (@list)
         {
-          my $from = File::Spec->catfile($static_dir, $basename);
-          my $to   = File::Spec->catfile($dll_dir,    $basename);
+          my $from = _catfile($static_dir, $basename);
+          my $to   = _catfile($dll_dir,    $basename);
           if(-l $from)
           {
             symlink(readlink $from, $to);
@@ -483,13 +517,13 @@ sub build_install
     }
 
     my $build = bless {
-      cflags  => ['-I' . File::Spec->catdir($prefix, 'include')],
-      libs    => ['-L' . File::Spec->catdir($prefix, 'lib'), '-llzo2'],
+      cflags  => ['-I' . _catdir($prefix, 'include')],
+      libs    => ['-L' . _catdir($prefix, 'lib'), '-llzo2'],
       prefix  => $prefix,
       dll_dir => [ 'dll' ],
       dlls    => do {
-        opendir(my $dh, File::Spec->catdir($prefix, 'dll'));
-        [grep { ! -l File::Spec->catfile($prefix, 'dll', $_) } grep { /\.so/ || /\.(dll|dylib)$/ } grep !/^\./, readdir $dh];
+        opendir(my $dh, _catdir($prefix, 'dll'));
+        [grep { ! -l _catfile($prefix, 'dll', $_) } grep { /\.so/ || /\.(dll|dylib)$/ } grep !/^\./, readdir $dh];
       },
     }, $class;
     
@@ -573,12 +607,12 @@ sub dlls
         $self->{dlls} = [ $file ];
       }
       $self->{dll_dir} = [];
-      $prefix = File::Spec->catpath($vol, $dirs);
+      $prefix = _catpath($vol, $dirs);
     }
   }
   
   require File::Spec;
-  map { File::Spec->catfile($prefix, @{ $self->{dll_dir} }, $_ ) } @{ $self->{dlls} };
+  map { _catfile($prefix, @{ $self->{dll_dir} }, $_ ) } @{ $self->{dlls} };
 }
 
 =head1 INSTANCE METHODS
@@ -613,6 +647,12 @@ Directory to use for building the executable.
 If not specified, a temporary directory will be
 created and removed when Perl terminates.
 
+=item quiet
+
+Passed into L<ExtUtils::CBuilder> if you do not
+provide your own instance.  The default is true
+(unlike L<ExtUtils::CBuilder> itself).
+
 =back
 
 =cut
@@ -621,7 +661,9 @@ sub test_compile_run
 {
   my($self, %opt) = @_;
   delete $self->{error};
-  my $cbuilder = $opt{cbuilder} || do { require ExtUtils::CBuilder; ExtUtils::CBuilder->new(quiet => 1) };
+  #$self->{quiet} = 1 unless defined $self->{quiet};
+  $self->{quiet} = 1;
+  my $cbuilder = $opt{cbuilder} || do { require ExtUtils::CBuilder; ExtUtils::CBuilder->new(quiet => $self->{quiet}) };
   
   unless($cbuilder->have_compiler)
   {
@@ -631,7 +673,7 @@ sub test_compile_run
   
   require File::Spec;
   my $dir = $opt{dir} || do { require File::Temp; File::Temp::tempdir( CLEANUP => 1 ) };
-  my $fn = File::Spec->catfile($dir, 'test.c');
+  my $fn = _catfile($dir, 'test.c');
   do {
     open my $fh, '>', $fn;
     print $fh "#include <lzo/lzoconf.h>\n",
