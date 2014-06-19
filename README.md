@@ -123,6 +123,10 @@ that make up libarchive.  This can be used for [FFI::Raw](https://metacpan.org/p
 
 Returns just the first dynamic library found in scalar context.
 
+## version
+
+Returns the libarchive version.
+
 ## install\_type
 
 Returns the install type, one of either `system` or `share`.
