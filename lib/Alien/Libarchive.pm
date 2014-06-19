@@ -213,6 +213,17 @@ sub dlls
   wantarray ? @list : $list[0];
 }
 
+=head2 version
+
+Returns the libarchive version.
+
+=cut
+
+sub version
+{
+  $cf->config("version");
+}
+
 =head2 install_type
 
 Returns the install type, one of either C<system> or C<share>.
