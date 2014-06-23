@@ -323,6 +323,10 @@ distributions that depend on it as well.
 
 =item L<Archive::Extract::Libarchive>
 
+=item L<YAPC::NA 2014 Foreign Function Interface (FFI) : Never Need to Write XS Again|https://docs.google.com/presentation/d/1NY3ROAiSAC5yk1LoeBCM5JfAmSeTdopgYFnJO6mUtXI/edit?usp=sharing>
+
+Slides on a talk about FFI and Alien
+
 =back
 
 =cut

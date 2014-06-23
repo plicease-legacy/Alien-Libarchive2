@@ -161,6 +161,9 @@ distributions that depend on it as well.
 - [Archive::Ar::Libarchive](https://metacpan.org/pod/Archive::Ar::Libarchive)
 - [Archive::Peek::Libarchive](https://metacpan.org/pod/Archive::Peek::Libarchive)
 - [Archive::Extract::Libarchive](https://metacpan.org/pod/Archive::Extract::Libarchive)
+- [YAPC::NA 2014 Foreign Function Interface (FFI) : Never Need to Write XS Again](https://docs.google.com/presentation/d/1NY3ROAiSAC5yk1LoeBCM5JfAmSeTdopgYFnJO6mUtXI/edit?usp=sharing)
+
+    Slides on a talk about FFI and Alien
 
 # AUTHOR
 
