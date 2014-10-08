@@ -1,7 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.22      2014-10-08 14:34:37 -0400
   - add version method
+  - fixed weird recursive deps on MSWin32
 
 0.21      2014-06-19 07:41:16 -0400
   - promoted to production
