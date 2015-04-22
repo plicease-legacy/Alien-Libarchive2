@@ -35,8 +35,8 @@ Build.PL
  my $alien = Alien::Libarchive->new;
  my $build = Module::Build->new(
    ...
-   extra_compiler_flags => $alien->cflags,
-   extra_linker_flags   => $alien->libs,
+   extra_compiler_flags => [$alien->cflags],
+   extra_linker_flags   => [$alien->libs],
    ...
  );
  
@@ -50,25 +50,17 @@ Makefile.PL
  my $alien = Alien::Libarchive;
  WriteMakefile(
    ...
-   CFLAGS => $alien->cflags,
-   LIBS   => $alien->libs,
+   CCFLAGS => scalar $alien->cflags,
+   LIBS    => [$alien->libs],
  );
 
-FFI::Raw
+FFI::Platypus
 
  use Alien::Libarchive;
- use FFI::Raw;
+ use FFI::Platypus;
  
- my($dll) = Alien::Libarchive->new->dlls;
- FFI::Raw->new($dll, 'archive_read_new', FFI::Raw::ptr);
-
-FFI::Sweet
-
- use Alien::Libarchive;
- use FFI::Sweet;
- 
- ffi_lib( Alien::Libarchive->new->dlls );
- attach_function 'archive_read_new', [], _ptr;
+ my $ffi = FFI::Platypus->new(lib => [Alien::Libarchive->new->dlls]);
+ $ffi->attach( archive_read_new => [] => 'opaque' );
 
 =head1 DESCRIPTION
 

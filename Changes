@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix the synopsis to be more accurate
 
 0.23      2015-04-22 07:26:11 -0400
   - install into arch specific directory
