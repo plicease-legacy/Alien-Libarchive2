@@ -70,11 +70,15 @@ be found, this distribution will use the libarchive that comes with your
 operating system, otherwise it will download it from the Internet, build
 and install it.
 
-If you set the environment variable ALIEN_LIBARCHIVE to 'share', this
+If you set the environment variable C<ALIEN_LIBARCHIVE> to 'share', this
 distribution will ignore any system libarchive found, and build from
 source instead.  This may be desirable if your operating system comes
 with a very old version of libarchive and an upgrade path for the 
 system libarchive is not possible.
+
+For partial compatibility with L<Alien::Base>, this distribution will also
+honor the C<ALIEN_FORCE> environment variable.  Setting C<ALIEN_BASE> to a
+true value is the same as setting C<ALIEN_LIBARCHIVE> to 'share'.
 
 =head2 Requirements
 

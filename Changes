@@ -1,6 +1,11 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove old ::Unix and ::MSWin32 modules
+    I believe I was the only one to ever use these,
+    and only by older versions of Alien::Libarchive
+    itself.
+  - Honour the ALIEN_FORCE environment variable a la Alien::Base
 
 0.24      2015-04-22 17:24:15 -0400
   - Fix the synopsis to be more accurate

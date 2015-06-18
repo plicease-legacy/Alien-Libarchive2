@@ -47,11 +47,15 @@ be found, this distribution will use the libarchive that comes with your
 operating system, otherwise it will download it from the Internet, build
 and install it.
 
-If you set the environment variable ALIEN\_LIBARCHIVE to 'share', this
+If you set the environment variable `ALIEN_LIBARCHIVE` to 'share', this
 distribution will ignore any system libarchive found, and build from
 source instead.  This may be desirable if your operating system comes
 with a very old version of libarchive and an upgrade path for the 
 system libarchive is not possible.
+
+For partial compatibility with [Alien::Base](https://metacpan.org/pod/Alien::Base), this distribution will also
+honor the `ALIEN_FORCE` environment variable.  Setting `ALIEN_BASE` to a
+true value is the same as setting `ALIEN_LIBARCHIVE` to 'share'.
 
 ## Requirements
 

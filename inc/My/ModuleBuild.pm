@@ -41,6 +41,8 @@ sub new
 
   my $system;
 
+  $ENV{ALIEN_LIBARCHIVE} = 'share' if $ENV{ALIEN_FORCE} && ! defined $ENV{ALIEN_LIBARCHIVE};
+
   unless(($ENV{ALIEN_LIBARCHIVE} || 'system') eq 'share')
   {
     $system = eval {
