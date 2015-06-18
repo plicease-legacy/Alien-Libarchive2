@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.25      2015-06-17 20:47:36 -0400
   - Remove old ::Unix and ::MSWin32 modules
     I believe I was the only one to ever use these,
     and only by older versions of Alien::Libarchive
