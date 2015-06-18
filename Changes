@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - 01_use.t was still testing old modules
+    (which is fine if you are upgrading)
+    they have now been removed from this test.
 
 0.25      2015-06-17 20:47:36 -0400
   - Remove old ::Unix and ::MSWin32 modules
