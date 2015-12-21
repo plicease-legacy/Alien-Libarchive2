@@ -1,15 +1,16 @@
 language: perl
 sudo: false
 
+addons:
+  apt:
+    packages:
+      - libarchive-dev
+
 install:
-  - sudo apt-get update
-  - sudo apt-get install libarchive-dev
-  - cpanm -n Dist::Zilla
+  - perlbrew list
   - dzil authordeps --missing | cpanm -n
-  - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version Test::Vars || true
-  - cpanm -n Alien::Libarchive::Installer Alien::bz2::Installer
+  - dzil listdeps --missing | cpanm -n
   - cpanm -n FFI::Raw || true
-  - cpanm -n Test::CChecker HTTP::Tiny
 
 perl:
   - "5.8"
