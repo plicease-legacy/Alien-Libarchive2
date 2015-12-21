@@ -1,4 +1,5 @@
 language: perl
+sudo: false
 
 install:
   - sudo apt-get update
@@ -9,6 +10,7 @@ install:
   - cpanm -n Alien::Libarchive::Installer Alien::bz2::Installer
   - cpanm -n FFI::Raw || true
   - cpanm -n Test::CChecker HTTP::Tiny
+
 perl:
   - "5.8"
   - "5.10"
@@ -17,14 +19,11 @@ perl:
   - "5.16"
   - "5.18"
   - "5.20"
-  - "5.21"
+  - "5.22"
 
 env:
   - ALIEN_LIBARCHIVE=share
   - ALIEN_LIBARCHIVE=system
 
-#before_script: /bin/true
-
-script: dzil test -v
-
-#after_script: /bin/true
+script:
+  - dzil test -v
