@@ -2,24 +2,36 @@ use strict;
 use warnings;
 use Config;
 use Test::More tests => 1;
-BEGIN {
-  my @modules;
-  eval q{
-    require FindBin;
-    require File::Spec;
-    1;
-  } || die $@;
-  do {
-    my $fh;
-    if(open($fh, '<', File::Spec->catfile($FindBin::Bin, '00_diag.pre.txt')))
-    {
-      @modules = <$fh>;
-      close $fh;
-      chomp @modules;
-    }
+
+# This .t file is generated.
+# make changes instead to dist.ini
+
+my %modules;
+my $post_diag;
+
+$modules{$_} = $_ for qw(
+  Alien::Libarchive::Installer
+  Alien::bz2::Installer
+  File::ShareDir
+  Module::Build
+  Test::More
+);
+
+$post_diag = sub
+{
+  eval {
+    require Alien::Libarchive;
+    my $alien = Alien::Libarchive->new;
+    diag 'libarchive';
+    diag '  cflags       : ', join ' ', $alien->cflags;
+    diag '  libs         : ', join ' ', $alien->libs;
+    diag '  install_type : ', $alien->install_type;
+    diag '  dlls         : ', (eval { $alien->dlls } || 'not found');
+    diag '  version      : ', (eval { $alien->version } || 'unknown');
   };
-  eval qq{ require $_ } for @modules;
 };
+
+my @modules = sort keys %modules;
 
 sub spacer ()
 {
@@ -29,15 +41,6 @@ sub spacer ()
 }
 
 pass 'okay';
-
-my @modules;
-do {
-  my $fh;
-  open($fh, '<', File::Spec->catfile($FindBin::Bin, '00_diag.txt'));
-  @modules = <$fh>;
-  close $fh;
-  chomp @modules;
-};
 
 my $max = 1;
 $max = $_ > $max ? $_ : $max for map { length $_ } @modules;
@@ -68,10 +71,7 @@ if(@keys > 0)
   spacer;
 }
 
-diag sprintf $format, 'perl ', $^V;
-
-require(File::Spec->catfile($FindBin::Bin, '00_diag.pl'))
-  if -e File::Spec->catfile($FindBin::Bin, '00_diag.pl');
+diag sprintf $format, 'perl ', $];
 
 foreach my $module (@modules)
 {
@@ -85,6 +85,12 @@ foreach my $module (@modules)
   {
     diag sprintf $format, $module, '-';
   }
+}
+
+if($post_diag)
+{
+  spacer;
+  $post_diag->();
 }
 
 spacer;
