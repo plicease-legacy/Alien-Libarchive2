@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.27      2016-04-11 17:00:12 -0400
   - Fixes for Strawberry Perl
 
 0.26      2015-06-17 22:35:55 -0400
