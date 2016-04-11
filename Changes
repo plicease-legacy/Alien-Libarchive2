@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixes for Strawberry Perl
 
 0.26      2015-06-17 22:35:55 -0400
   - 01_use.t was still testing old modules
