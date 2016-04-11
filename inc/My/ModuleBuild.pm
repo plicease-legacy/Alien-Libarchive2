@@ -142,21 +142,22 @@ sub ACTION_build
           my $build_dir = _catdir($FindBin::Bin, '_alien_bz2');
           mkdir $build_dir unless -d $build_dir;
           $build = eval { Alien::bz2::Installer->build_install($prefix, dir => $build_dir) };
-        }
-        
-        if(defined $build)
-        {
-          if($^O eq 'MSWin32')
+
+          if(defined $build)
           {
-            my $dir = _catdir($prefix, 'dll');
-            mkdir $dir;
-            my $la = _catfile($dir, 'libbz2.la');
-            open my $fh, '>', $la;
-            binmode $fh;
-            print $fh _bz2_la_file($prefix);
-            close $fh;
+            if($^O eq 'MSWin32')
+            {
+              my $dir = _catdir($prefix, 'dll');
+              mkdir $dir;
+              my $la = _catfile($dir, 'libbz2.la');
+              open my $fh, '>', $la;
+              binmode $fh;
+              print $fh _bz2_la_file($prefix);
+              close $fh;
+            }
           }
         }
+        
       }
     
       my $build_dir = _catdir($FindBin::Bin, '_alien_libarchive');
