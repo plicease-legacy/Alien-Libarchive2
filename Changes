@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - require Alien::Libarchive::Installer 0.15 (gh#5)
 
 0.27      2016-04-11 17:00:12 -0400
   - Fixes for Strawberry Perl
