@@ -11,6 +11,7 @@ install:
   - dzil authordeps --missing | cpanm -n
   - dzil listdeps --missing | cpanm -n
   - cpanm -n FFI::Raw || true
+  - cpanm -n Alien::patch
 
 perl:
   - "5.14"
