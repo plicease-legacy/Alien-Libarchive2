@@ -1,0 +1,41 @@
+use alienfile;
+
+plugin 'PkgConfig' => 'libarchive';
+
+share {
+
+  requires 'Alien::Nettle' => '0.01';
+
+  plugin Download => (
+    url     => 'http://libarchive.org',
+    version => qr/^libarchive-([0-9\.]+)\.tar\.gz$/,
+  );
+  
+  meta->around_hook(
+    build => sub {
+      my($orig, $build) = @_;
+      
+      local $ENV{CFLAGS} = $ENV{CFLAGS};
+      local $ENV{LDFLAGS} = $ENV{LDFLAGS};
+      
+      if(Alien::Nettle->install_type('share'))
+      {
+        $ENV{CFLAGS} = "-I" . Alien::Nettle->dist_dir . "/include " . ($ENV{CFLAGS}||'');
+        $ENV{LDFLAGS} = "-L" . Alien::Nettle->dist_dir . "/lib " . ($ENV{LDFLAGS}||'');
+      }
+      else
+      {
+        die;
+      }
+      
+      system 'env';
+      
+      $orig->($build);
+    }
+  );
+
+  plugin Extract => 'tar.gz';
+
+  plugin 'Build::Autoconf' => ();
+
+};
