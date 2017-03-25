@@ -4,7 +4,7 @@ plugin 'PkgConfig' => 'libarchive';
 
 share {
 
-  requires 'Alien::Nettle' => '0.01';
+  requires 'Alien::Libxml2' => '0.01';
   requires 'Env::ShellWords' => '0.01';
 
   plugin Download => (
@@ -12,7 +12,10 @@ share {
     version => qr/^libarchive-([0-9\.]+)\.tar\.gz$/,
   );
 
-  my @aliens = qw( Alien::Nettle Alien::xz Alien::LZO );
+  # TODO: release Alien::Libxml2 if Alien::LibXML doesn't get its act together
+  # TODO: lz4 https://github.com/lz4/lz4/releases 
+  # TODO: http://zlib.net/
+  my @aliens = qw( Alien::Nettle Alien::xz Alien::LZO Alien::Libbz2 );
   requires $_ for @aliens;
   
   meta->around_hook(
